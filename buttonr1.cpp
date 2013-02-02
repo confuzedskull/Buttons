@@ -10,19 +10,12 @@
 #else
 #include <GL/glut.h>
 #endif
-#include <\Users\James\Dropbox\My Programs\C\color.h>
-#include <\Users\James\Dropbox\My Programs\C\glutPrint.h>
+#include <\Users\James\Dropbox\My Programs\C++\header files\color.h>
+#include <\Users\James\Dropbox\My Programs\C++\header files\glutPrint.h>
 //Button
 //By James Nakano
 //This program demonstrates simple mouse-object interactivity that could be used for creating buttons
 //It sets up a truly 2d environment (as apposed to 2d figures drawn in a 3d modelview) thankyou glOrtho
-
-//changelog
-//started using my own header files for the first time ever.
-//changed float color to color current_color in button class
-//overloaded button constructor
-//created text_button class of super class object
-//removed right click control from mouse_func
 
 //width and height of program window
 int window_width=640;
@@ -59,6 +52,7 @@ class button
     int solidity;
     float xmin,xmax,ymin,ymax;
     color current_color;
+    int clicks;
     bool clicked()
     {
         if(mouse_x<xmax && mouse_x>xmin && mouse_y<ymax && mouse_y>ymin)
@@ -67,17 +61,31 @@ class button
         return false;
     }
 
-    bool selected;
+    bool highlighted()
+    {
+        if(mouse2_x<xmax && mouse2_x>xmin && mouse2_y<ymax && mouse2_y>ymin)
+        return true;
+        else
+        return false;
+    }
+
     void function()//
     {
         if(clicked()==true)
         {
             if(current_color.r==1 && current_color.g==0 && current_color.b==0)
             current_color.set(GREEN);
-            selected=true;
         }
         else
         current_color.set(RED);
+
+
+        if(highlighted() && !clicked())
+        {
+            if(current_color.r==1 && current_color.g==0 && current_color.b==0)
+            current_color.set(YELLOW);
+        }
+
 
     }
     void set_coordinates(float a,float b)
@@ -95,7 +103,7 @@ class button
 
     void render()//draws the actual button
     {
-        glColor3f(current_color.r,current_color.g,current_color.b);
+        glColor4f(current_color.r,current_color.g,current_color.b,current_color.a);
         glBegin(GL_POLYGON);
 
         glVertex2f(xmin, ymin); // The bottom left corner
@@ -123,6 +131,7 @@ class button
 
     button(float x, float y)
     {
+
         current.x=x;
         current.y=y;
         width=50.0;
@@ -130,7 +139,7 @@ class button
         current_color.set(RED);
     }
 
-    button(float x, float y, double w, double h, color background_color)
+    button(float x, float y, float w, float h, color background_color)
     {
         current.x=x;
         current.y=y;
@@ -140,7 +149,6 @@ class button
     }
 
 };
-
 
 class text_button: public button
 {
@@ -152,38 +160,29 @@ class text_button: public button
         {
             //this is supposed to be text within the button
             sprintf(text,"Button %d",number);
-            glutPrint (current.x,current.y, GLUT_BITMAP_HELVETICA_12, text, text_color.r,text_color.g,text_color.b, 0.5f);
+            glutPrint (xmin+width/16,ymin+height/2, GLUT_BITMAP_HELVETICA_12, text, text_color.r,text_color.g,text_color.b, 0.5f);
 
         }
     void render()//draws the actual button
     {
-        render_text();
         glColor3f(current_color.r,current_color.g,current_color.b);
         glBegin(GL_POLYGON);
-
         glVertex2f(xmin, ymin); // The bottom left corner
         glVertex2f(xmin, ymax); // The top left corner
         glVertex2f(xmax, ymax); // The top right corner
         glVertex2f(xmax, ymin); // The bottom right corner
-
         glEnd();
+        render_text();
         glFlush();
     }
 
     text_button()
     {
-        text_color.set(BLUE);
-
+        text_color.set(BLACK);
     }
 };
 //create new button
 text_button button1;
-
-//not used yet
-float distance(float x1, float y1, float x2, float y2)
-{
-    return (sqrt(pow((x2 - x1),2) + pow((y2 - y1),2)));
-}
 
 //handles window resizing
 void changeSize(int w, int h) {
@@ -219,9 +218,6 @@ void changeSize(int w, int h) {
 
 }
 
-
-
-
 void mouse_enter(int state)
 {
     if (state==GLUT_ENTERED)
@@ -250,10 +246,10 @@ void mouseMovement(int x, int y) {
 void text ()
 {
     sprintf(text1,"mouse=%i , %i",mouse_x,mouse_y);
-    glutPrint (0.0,10.0, GLUT_BITMAP_HELVETICA_12, text1, 1.0f,0.0f,0.0f, 0.5f);
+    glutPrint (0.0,10.0, GLUT_BITMAP_HELVETICA_12, text1, 0.0f,0.0f,0.0f, 0.5f);
 
     sprintf(text2,"button1=%.3f , %.3f",button1.current.x,button1.current.y);
-    glutPrint (0.0,0.0, GLUT_BITMAP_HELVETICA_12, text2, 1.0f,0.0f,0.0f, 0.5f);
+    glutPrint (0.0,0.0, GLUT_BITMAP_HELVETICA_12, text2, 0.0f,0.0f,0.0f, 0.5f);
 
 
 }
@@ -275,22 +271,16 @@ void renderScene(void) {
 //preliminary settings that set up drawing environment
 void initializeWindow()
 {
-    glClearColor (0.0, 0.0, 0.0, 0.5);//background color
+    glClearColor (1.0, 1.0, 1.0, 1.0);//background color
     glViewport(0,0,window_width,window_height);
-
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0.0, (GLdouble) window_width , 0.0, (GLdouble) window_height , -1.0, 1.0);
-
-    glClearColor (0.0, 0.0, 0.0, 1.0);
-    glClear(GL_COLOR_BUFFER_BIT);
     glFlush();
-
 }
 //used this in mouse motion function
-void mouse(int x, int y)
+void mouse_move(int x, int y)
 {
-
     mouse2_x=x;
     mouse2_y=window_height-y;
 }
@@ -300,7 +290,7 @@ int main(int argc, char **argv) {
     srand ( time(NULL) );
 	// init GLUT and create window
 	glutInit(&argc, argv);
-	glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB);
+	glutInitDisplayMode (GLUT_SINGLE | GLUT_RGBA);
 	glutInitWindowPosition(100,100);
 	glutInitWindowSize(window_width,window_height);
 	printf("window size: %dX%d\n", window_width, window_height);
@@ -310,8 +300,8 @@ int main(int argc, char **argv) {
 
     //glutEntryFunc(mouse_enter);
     glutMouseFunc(mouse_func);
-    //glutMotionFunc(mouse);
-    //glutPassiveMotionFunc(mouseMovement); //check for mouse movement
+    //glutMotionFunc(mouse_drag);
+    glutPassiveMotionFunc(mouse_move); //check for mouse movement
 	// enter GLUT event processing cycle
 	glutDisplayFunc(renderScene);
 	printf("rendering...\n");
