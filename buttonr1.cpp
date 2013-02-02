@@ -79,12 +79,6 @@ class button
         else
         current_color.set(RED);
 
-        if(selected==true)
-        {
-            current.x=mouse2_x;
-            current.y=mouse2_y;
-        }
-
     }
     void set_coordinates(float a,float b)
     {
@@ -110,9 +104,6 @@ class button
         glVertex2f(xmax, ymin); // The bottom right corner
 
         glEnd();
-
-
-
         glFlush();
     }
     button()//button constructor
@@ -155,17 +146,33 @@ class text_button: public button
 {
     public:
     char text[10];
+    color text_color;
 
     void render_text()
         {
             //this is supposed to be text within the button
             sprintf(text,"Button %d",number);
-            glutPrint ((xmin+1),current.y, GLUT_BITMAP_HELVETICA_12, text, 0.0f,0.0f,0.0f, 0.5f);
+            glutPrint (current.x,current.y, GLUT_BITMAP_HELVETICA_12, text, text_color.r,text_color.g,text_color.b, 0.5f);
 
         }
+    void render()//draws the actual button
+    {
+        render_text();
+        glColor3f(current_color.r,current_color.g,current_color.b);
+        glBegin(GL_POLYGON);
+
+        glVertex2f(xmin, ymin); // The bottom left corner
+        glVertex2f(xmin, ymax); // The top left corner
+        glVertex2f(xmax, ymax); // The top right corner
+        glVertex2f(xmax, ymin); // The bottom right corner
+
+        glEnd();
+        glFlush();
+    }
 
     text_button()
     {
+        text_color.set(BLUE);
 
     }
 };
@@ -255,26 +262,20 @@ void text ()
 void renderScene(void) {
 
 //render the objects
-
     glClear(GL_COLOR_BUFFER_BIT);
-
     text();
-
     glutPostRedisplay();
 
     button1.set_boundaries();
     button1.function();
-    button1.render_text();
     button1.render();
-
-
 
 	glutSwapBuffers();
 }
 //preliminary settings that set up drawing environment
 void initializeWindow()
 {
-    glClearColor (0.0, 0.0, 0.0, 1.0);//background color
+    glClearColor (0.0, 0.0, 0.0, 0.5);//background color
     glViewport(0,0,window_width,window_height);
 
     glMatrixMode(GL_PROJECTION);
