@@ -10,8 +10,9 @@
 #else
 #include <GL/glut.h>
 #endif
-#include <\Users\James\Dropbox\My Programs\C++\header files\color.h>
-#include <\Users\James\Dropbox\My Programs\C++\header files\glutPrint.h>
+
+#include <\Users\James\Dropbox\My Programs\C++\headers\clickable_object.h>
+#include <\Users\James\Dropbox\My Programs\C++\headers\glutPrint.h>
 //Button
 //By James Nakano
 //This program demonstrates simple mouse-object interactivity that could be used for creating buttons
@@ -24,65 +25,40 @@ int window_height=320;
 int random1 = rand() % 50;
 int random2 = rand() % 50;
 
-int object_no=0;
-
-struct point {float x; float y;};
-struct vect {float x; float y;};
 char text1[30];
 char text2[30];
 
 float lastx, lasty;
-//left click coordinates (global variable)
-int mouse_x;
-int mouse_y;
-//right click coordinates (global variable)
-int mouse2_x;
-int mouse2_y;
-
-class button
+cursor cursor1;
+class button : public clickable_object
 {
 
     public:
     char* name;
 
     int number;
-    point current;
-    point resting;
     double width, height;
     int solidity;
-    float xmin,xmax,ymin,ymax;
     color current_color;
     int clicks;
-    bool clicked()
-    {
-        if(mouse_x<xmax && mouse_x>xmin && mouse_y<ymax && mouse_y>ymin)
-        return true;
-        else
-        return false;
-    }
 
     bool highlighted()
     {
-        if(mouse2_x<xmax && mouse2_x>xmin && mouse2_y<ymax && mouse2_y>ymin)
+        if(cursor1.passive.x<xmax && cursor1.passive.x>xmin && cursor1.passive.y<ymax && cursor1.passive.y>ymin )
         return true;
         else
         return false;
     }
 
-    void function()//
+    void function()
     {
-        if(clicked()==true)
+        if(left_clicked())
         {
-            if(current_color.r==1 && current_color.g==0 && current_color.b==0)
             current_color.set(GREEN);
         }
-        else
-        current_color.set(RED);
 
-
-        if(highlighted() && !clicked())
+        if(highlighted())
         {
-            if(current_color.r==1 && current_color.g==0 && current_color.b==0)
             current_color.set(YELLOW);
         }
 
@@ -126,7 +102,7 @@ class button
         width=50.0;
         height=25.0;
         current_color.set(RED);
-
+        set_boundaries();
     }
 
     button(float x, float y)
@@ -178,11 +154,24 @@ class text_button: public button
 
     text_button()
     {
+        current_color.set(0.5,0.5,0.5);
+        text_color.set(BLACK);
+    }
+
+    text_button(float x,float y)
+    {
+        current.x=x;
+        current.y=y;
+        width=50.0;
+        height=25.0;
+        current_color.set(0.5,0.5,0.5);
         text_color.set(BLACK);
     }
 };
 //create new button
 text_button button1;
+button button2(100,100,75,50,RED);
+
 
 //handles window resizing
 void changeSize(int w, int h) {
@@ -228,24 +217,17 @@ void mouse_func( int button, int state, int x, int y )
 {
 	if ( button==GLUT_LEFT_BUTTON && state==GLUT_DOWN )
 	{
-	    mouse_x=x;
-	    mouse_y=window_height-y;
+	    cursor1.left_down.x=x;
+	    cursor1.left_down.y=window_height-y;
 	}
 
 
 }
-//not used yet
-void mouseMovement(int x, int y) {
-    int diffx=x-lastx; //check the difference between the current x and the last x position
-    int diffy=y-lasty; //check the difference between the current y and the last y position
-    lastx=x; //set lastx to the current x position
-    lasty=y; //set lasty to the current y position
 
-}
 //takes care of the text on screen
 void text ()
 {
-    sprintf(text1,"mouse=%i , %i",mouse_x,mouse_y);
+    sprintf(text1,"mouse=%.3f , %.3f",cursor1.passive.x,cursor1.passive.y);
     glutPrint (0.0,10.0, GLUT_BITMAP_HELVETICA_12, text1, 0.0f,0.0f,0.0f, 0.5f);
 
     sprintf(text2,"button1=%.3f , %.3f",button1.current.x,button1.current.y);
@@ -262,9 +244,13 @@ void renderScene(void) {
     text();
     glutPostRedisplay();
 
-    button1.set_boundaries();
     button1.function();
+    button1.set_boundaries();
     button1.render();
+
+    button2.function();
+    button2.set_boundaries();
+    button2.render();
 
 	glutSwapBuffers();
 }
@@ -281,8 +267,8 @@ void initializeWindow()
 //used this in mouse motion function
 void mouse_move(int x, int y)
 {
-    mouse2_x=x;
-    mouse2_y=window_height-y;
+    cursor1.passive.x=x;
+    cursor1.passive.y=window_height-y;
 }
 
 int main(int argc, char **argv) {
@@ -294,9 +280,10 @@ int main(int argc, char **argv) {
 	glutInitWindowPosition(100,100);
 	glutInitWindowSize(window_width,window_height);
 	printf("window size: %dX%d\n", window_width, window_height);
-	glutCreateWindow("Button");
+	glutCreateWindow("Buttons");
 	initializeWindow();
 	glutReshapeFunc(changeSize);
+	//glutIdleFunc(renderScene);
 
     //glutEntryFunc(mouse_enter);
     glutMouseFunc(mouse_func);
@@ -306,6 +293,9 @@ int main(int argc, char **argv) {
 	glutDisplayFunc(renderScene);
 	printf("rendering...\n");
 	glutMainLoop();
+
+    button2.current.x=100;
+    button2.current.y=100;
 
 
 }
