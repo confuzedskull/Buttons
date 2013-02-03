@@ -25,11 +25,12 @@ int window_height=320;
 int random1 = rand() % 50;
 int random2 = rand() % 50;
 
+float mousex;
+float mousey;
+
 char text1[30];
 char text2[30];
 
-float lastx, lasty;
-cursor cursor1;
 class button : public clickable_object
 {
 
@@ -56,8 +57,10 @@ class button : public clickable_object
         {
             current_color.set(GREEN);
         }
+        else
+        current_color.set(RED);
 
-        if(highlighted())
+        if(highlighted() && !left_clicked())
         {
             current_color.set(YELLOW);
         }
@@ -269,6 +272,8 @@ void mouse_move(int x, int y)
 {
     cursor1.passive.x=x;
     cursor1.passive.y=window_height-y;
+    mousex=x;
+    mousey=window_height-y;
 }
 
 int main(int argc, char **argv) {
