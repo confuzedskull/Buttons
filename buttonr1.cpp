@@ -28,8 +28,10 @@ int random2 = rand() % 50;
 float mousex;
 float mousey;
 
-char text1[30];
-char text2[30];
+char text1[50];
+char text2[50];
+char text3[10];
+char text4[100];
 
 class button : public clickable_object
 {
@@ -174,6 +176,7 @@ class text_button: public button
 //create new button
 text_button button1;
 button button2(100,100,75,50,RED);
+button button3(100,200,75,50,RED);
 
 
 //handles window resizing
@@ -236,6 +239,11 @@ void text ()
     sprintf(text2,"button1=%.3f , %.3f",button1.current.x,button1.current.y);
     glutPrint (0.0,0.0, GLUT_BITMAP_HELVETICA_12, text2, 0.0f,0.0f,0.0f, 0.5f);
 
+    sprintf(text3,"Buttons!");
+    glutPrint (300,300, GLUT_BITMAP_HELVETICA_18, text3, 0.0f,0.0f,0.0f, 1.0f);
+
+    sprintf(text4,"Hovering over a button makes it yellow. Clicking turns it green. Click anywhere else makes it red.");
+    glutPrint (25,280, GLUT_BITMAP_HELVETICA_12, text4, 0.0f,0.0f,0.0f, 0.5f);
 
 }
 
@@ -254,6 +262,10 @@ void renderScene(void) {
     button2.function();
     button2.set_boundaries();
     button2.render();
+
+    button3.function();
+    button3.set_boundaries();
+    button3.render();
 
 	glutSwapBuffers();
 }
