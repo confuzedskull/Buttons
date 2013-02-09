@@ -28,9 +28,9 @@ int random2 = rand() % 50;
 float mousex;
 float mousey;
 
-char text1[50];
+char text1[30];
 char text2[50];
-char text3[10];
+char text3[40];
 char text4[100];
 
 class button : public clickable_object
@@ -177,6 +177,9 @@ class text_button: public button
 text_button button1;
 button button2(100,100,75,50,RED);
 button button3(100,200,75,50,RED);
+text_button button4;
+button button5(400,100,75,50,RED);
+button button6(400,200,75,50,RED);
 
 
 //handles window resizing
@@ -226,8 +229,6 @@ void mouse_func( int button, int state, int x, int y )
 	    cursor1.left_down.x=x;
 	    cursor1.left_down.y=window_height-y;
 	}
-
-
 }
 
 //takes care of the text on screen
@@ -266,6 +267,19 @@ void renderScene(void) {
     button3.function();
     button3.set_boundaries();
     button3.render();
+
+    button4.function();
+    button4.set_coordinates(400,160);
+    button4.set_boundaries();
+    button4.render();
+
+    button5.function();
+    button5.set_boundaries();
+    button5.render();
+
+    button6.function();
+    button6.set_boundaries();
+    button6.render();
 
 	glutSwapBuffers();
 }
