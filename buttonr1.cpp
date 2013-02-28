@@ -32,6 +32,7 @@ char text1[30];
 char text2[50];
 char text3[40];
 char text4[100];
+char text5[3];
 
 class button : public clickable_object
 {
@@ -44,6 +45,8 @@ class button : public clickable_object
     int solidity;
     color current_color;
     int clicks;
+    bool down;
+    int value;
 
     bool highlighted()
     {
@@ -53,20 +56,47 @@ class button : public clickable_object
         return false;
     }
 
-    void function()
+    void select()
     {
-        if(left_clicked())
-        {
-            current_color.set(GREEN);
-        }
-        else
-        current_color.set(RED);
+        if(cursor1.left_click && left_clicked())
+        selected=true;
+        if(cursor1.left_click && !left_clicked())
+        selected=false;
+    }
 
+    void increment()
+    {
+        if(cursor1.left_click && left_clicked())
+        value++;
+    }
+
+    void decrement()
+    {
+        if(cursor1.left_click && left_clicked())
+        value--;
+    }
+
+    void highlight()
+    {
         if(highlighted() && !left_clicked())
         {
             current_color.set(YELLOW);
         }
+    }
 
+    void function()
+    {
+        if(left_clicked())
+        {
+            selected=true;
+            down=true;
+            current_color.set(GREEN);
+        }
+        else
+        {
+            current_color.set(RED);
+            down=false;
+        }
 
     }
     void set_coordinates(float a,float b)
@@ -84,7 +114,7 @@ class button : public clickable_object
 
     void render()//draws the actual button
     {
-        glColor4f(current_color.r,current_color.g,current_color.b,current_color.a);
+        glColor3f(current_color.r,current_color.g,current_color.b);
         glBegin(GL_POLYGON);
 
         glVertex2f(xmin, ymin); // The bottom left corner
@@ -101,7 +131,7 @@ class button : public clickable_object
         object_no++;
 
         number=object_no;
-
+        clicks=0;
         current.x=320;
         current.y=160;
         width=50.0;
@@ -117,6 +147,7 @@ class button : public clickable_object
         current.y=y;
         width=50.0;
         height=25.0;
+        value=0;;
         current_color.set(RED);
     }
 
@@ -126,6 +157,8 @@ class button : public clickable_object
         current.y=y;
         width=w;
         height=h;
+        clicks=0;
+        value=0;
         current_color=background_color;
     }
 
@@ -140,7 +173,7 @@ class text_button: public button
     void render_text()
         {
             //this is supposed to be text within the button
-            sprintf(text,"Button %d",number);
+            sprintf(text,"value:%d",value);
             glutPrint (xmin+width/16,ymin+height/2, GLUT_BITMAP_HELVETICA_12, text, text_color.r,text_color.g,text_color.b, 0.5f);
 
         }
@@ -173,11 +206,12 @@ class text_button: public button
         text_color.set(BLACK);
     }
 };
+
 //create new button
 text_button button1;
 button button2(100,100,75,50,RED);
 button button3(100,200,75,50,RED);
-text_button button4;
+text_button button4(400,160);
 button button5(400,100,75,50,RED);
 button button6(400,200,75,50,RED);
 
@@ -228,6 +262,11 @@ void mouse_func( int button, int state, int x, int y )
 	{
 	    cursor1.left_down.x=x;
 	    cursor1.left_down.y=window_height-y;
+	    cursor1.left_click=true;
+	}
+	if(button==GLUT_LEFT_BUTTON && state==GLUT_UP)
+	{
+        cursor1.left_click=false;
 	}
 }
 
@@ -243,9 +282,8 @@ void text ()
     sprintf(text3,"Buttons!");
     glutPrint (300,300, GLUT_BITMAP_HELVETICA_18, text3, 0.0f,0.0f,0.0f, 1.0f);
 
-    sprintf(text4,"Hovering over a button makes it yellow. Clicking turns it green. Click anywhere else makes it red.");
+    sprintf(text4,"Hovering over a button makes it yellow. Clicking turns it green.");
     glutPrint (25,280, GLUT_BITMAP_HELVETICA_12, text4, 0.0f,0.0f,0.0f, 0.5f);
-
 }
 
 //draws the main scene
@@ -258,26 +296,33 @@ void renderScene(void) {
 
     button1.function();
     button1.set_boundaries();
+    button1.highlight();
+    button1.increment();
     button1.render();
 
     button2.function();
     button2.set_boundaries();
+    button2.highlight();
     button2.render();
 
     button3.function();
+    button3.highlight();
     button3.set_boundaries();
     button3.render();
 
     button4.function();
-    button4.set_coordinates(400,160);
+    button4.highlight();
+    button4.decrement();
     button4.set_boundaries();
     button4.render();
 
     button5.function();
+    button5.highlight();
     button5.set_boundaries();
     button5.render();
 
     button6.function();
+    button6.highlight();
     button6.set_boundaries();
     button6.render();
 
