@@ -123,7 +123,6 @@ class button : public clickable_object
         glVertex2f(xmax, ymin); // The bottom right corner
 
         glEnd();
-        glFlush();
     }
     button()//button constructor
     {
@@ -187,7 +186,6 @@ class text_button: public button
         glVertex2f(xmax, ymin); // The bottom right corner
         glEnd();
         render_text();
-        glFlush();
     }
 
     text_button()
@@ -290,7 +288,8 @@ void text ()
 void renderScene(void) {
 
 //render the objects
-    glClear(GL_COLOR_BUFFER_BIT);
+
+    glClear(GL_COLOR_BUFFER_BIT); //apparently this is what causes the flickering
     text();
     glutPostRedisplay();
 
@@ -325,8 +324,7 @@ void renderScene(void) {
     button6.highlight();
     button6.set_boundaries();
     button6.render();
-
-	glutSwapBuffers();
+    glFlush();
 }
 //preliminary settings that set up drawing environment
 void initializeWindow()
