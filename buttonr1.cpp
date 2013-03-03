@@ -39,13 +39,9 @@ class button : public clickable_object
 
     public:
     char* name;
-
     int number;
     double width, height;
-    int solidity;
-    color current_color;
     int clicks,new_clicks;
-    bool down;
     int value,new_value;
     bool on;
     bool states[2];
@@ -156,11 +152,6 @@ class button : public clickable_object
         }
 
     }
-    void set_coordinates(float a,float b)
-    {
-        current.x=a;
-        current.y=b;
-    }
     void set_boundaries()//calculates the limits of the button based on its coordinates and size
     {
         xmin= current.x-(width/2);
@@ -239,10 +230,19 @@ class text_button: public button
     char text[10];
     color text_color;
 
+    void print_value()
+    {
+        sprintf(text,"value:%i",value);
+    }
+
+    void print_clicks()
+    {
+        sprintf(text,"clicks:%i",clicks);
+    }
+
     void render_text()
         {
             //this is supposed to be text within the button
-            sprintf(text,"value:%d",value);
             glutPrint (xmin+width/16,ymin+height/2, GLUT_BITMAP_HELVETICA_12, text, text_color.r,text_color.g,text_color.b, 0.5f);
 
         }
@@ -260,18 +260,24 @@ class text_button: public button
 
     text_button()
     {
+        clicks=0;
+        value=0;
         current_color.set(0.5,0.5,0.5);
         text_color.set(BLACK);
+        sprintf(text,"button #%i",number);
     }
 
     text_button(float x,float y)
     {
+        value=0;
+        clicks=0;
         current.x=x;
         current.y=y;
         width=50.0;
         height=25.0;
         current_color.set(0.5,0.5,0.5);
         text_color.set(BLACK);
+        sprintf(text,"button #%i",number);
     }
 
     text_button(float x,float y, color c)
@@ -282,6 +288,20 @@ class text_button: public button
         height=25.0;
         current_color.set(c);
         text_color.set(BLACK);
+        sprintf(text,"button #%i",number);
+    }
+
+    text_button(float x, float y, float w, float h, color c)
+    {
+        current.x=x;
+        current.y=y;
+        width=w;
+        height=h;
+        clicks=0;
+        value=0;
+        text_color.set(BLACK);
+        current_color.set(c);
+        sprintf(text,"button #%i",number);
     }
 
 };
@@ -292,7 +312,7 @@ button button2(100,100,75,50,RED);
 button button3(100,200,75,50,RED);
 text_button button4(400,160);
 button button5(400,100,75,50,RED);
-button button6(400,200,75,50,RED);
+text_button button6(400,200,75,50,RED);
 
 
 //handles window resizing
@@ -378,6 +398,7 @@ void renderScene(void) {
     button1.set_boundaries();
     button1.highlight();
     button1.increment();
+    button1.print_value();
     button1.render();
 
     button2.function();
@@ -393,6 +414,7 @@ void renderScene(void) {
     button4.function();
     button4.highlight();
     button4.decrement();
+    button4.print_value();
     button4.set_boundaries();
     button4.render();
 
