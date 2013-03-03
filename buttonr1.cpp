@@ -44,7 +44,7 @@ class button : public clickable_object
     double width, height;
     int solidity;
     color current_color;
-    int clicks;
+    int clicks,new_clicks;
     bool down;
     int value,new_value;
     bool on;
@@ -90,6 +90,17 @@ class button : public clickable_object
             new_value=0;
         }
 
+    }
+
+    void count_clicks()
+    {
+        if(left_clicked())
+        new_clicks=1;
+        if(!cursor1.left_click)
+        {
+            clicks=clicks+new_clicks;
+            new_clicks=0;
+        }
     }
 
     void reset()
@@ -181,6 +192,7 @@ class button : public clickable_object
         current.y=160;
         width=50.0;
         height=25.0;
+        value=0;
         current_color.set(RED);
         set_boundaries();
     }
