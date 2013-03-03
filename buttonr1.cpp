@@ -47,6 +47,8 @@ class button : public clickable_object
     int clicks;
     bool down;
     int value;
+    bool on;
+    bool states[2];
 
     bool highlighted()
     {
@@ -66,13 +68,13 @@ class button : public clickable_object
 
     void increment()
     {
-        if(cursor1.left_click && left_clicked())
+        if(left_clicked())
         value++;
     }
 
     void decrement()
     {
-        if(cursor1.left_click && left_clicked())
+        if(left_clicked())
         value--;
     }
 
@@ -84,18 +86,42 @@ class button : public clickable_object
         }
     }
 
+    void highlight(color c)
+    {
+        if(highlighted() && !left_clicked())
+        {
+            current_color.set(c);
+        }
+    }
+
+    void onoff()
+    {
+        if(left_clicked() && on)
+        {
+            states[0]=false;
+        }
+
+        if(left_clicked() && !on)
+        {
+            states[0]=true;
+        }
+
+        if(!cursor1.left_click)
+        {
+            on=states[0];
+        }
+    }
+
     void function()
     {
-        if(left_clicked())
+        if(left_clicked() || on)
         {
-            selected=true;
-            down=true;
             current_color.set(GREEN);
+
         }
         else
         {
             current_color.set(RED);
-            down=false;
         }
 
     }
@@ -150,6 +176,18 @@ class button : public clickable_object
         current_color.set(RED);
     }
 
+    button(float x, float y, color c)
+    {
+
+        current.x=x;
+        current.y=y;
+        width=50.0;
+        height=25.0;
+        value=0;;
+        current_color.set(c);
+    }
+
+
     button(float x, float y, float w, float h, color background_color)
     {
         current.x=x;
@@ -203,6 +241,17 @@ class text_button: public button
         current_color.set(0.5,0.5,0.5);
         text_color.set(BLACK);
     }
+
+    text_button(float x,float y, color c)
+    {
+        current.x=x;
+        current.y=y;
+        width=50.0;
+        height=25.0;
+        current_color.set(c);
+        text_color.set(BLACK);
+    }
+
 };
 
 //create new button
