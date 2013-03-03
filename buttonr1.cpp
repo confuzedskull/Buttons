@@ -46,7 +46,7 @@ class button : public clickable_object
     color current_color;
     int clicks;
     bool down;
-    int value;
+    int value,new_value;
     bool on;
     bool states[2];
 
@@ -69,13 +69,33 @@ class button : public clickable_object
     void increment()
     {
         if(left_clicked())
-        value++;
+        new_value=1;
+
+        if(!cursor1.left_click)
+        {
+            value=value+new_value;
+            new_value=0;
+        }
+
     }
 
     void decrement()
     {
         if(left_clicked())
-        value--;
+        new_value=1;
+
+        if(!cursor1.left_click)
+        {
+            value=value-new_value;
+            new_value=0;
+        }
+
+    }
+
+    void reset()
+    {
+        value=0;
+        clicks=0;
     }
 
     void highlight()
