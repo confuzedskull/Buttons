@@ -5,6 +5,7 @@
 #include <windows.h>
 #include <math.h>
 #include <string>
+#include <vector>
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #else
@@ -43,7 +44,7 @@ button button3(100,200,75,50,RED);
 text_button button4(400,160);
 button button5(400,100,75,50,RED);
 text_button button6(400,200,75,50,RED);
-
+text_button button7("click me",320,100);
 
 //handles window resizing
 void changeSize(int w, int h) {
@@ -157,6 +158,11 @@ void renderScene(void) {
     button6.highlight();
     button6.set_boundaries();
     button6.render();
+
+    button7.function();
+    button7.set_boundaries();
+    button7.render();
+
     glFlush();
 }
 //preliminary settings that set up drawing environment
