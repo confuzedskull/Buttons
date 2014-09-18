@@ -1,20 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
-#include <iostream>
 #include <windows.h>
 #include <math.h>
+#include <time.h>
 #include <string>
-#include <vector>
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #else
 #include <GL/glut.h>
 #endif
-#include <\Users\James\Dropbox\My Programs\C++\headers\glutPrint.h>
-#include <\Users\James\Dropbox\My Programs\C++\headers\clickable_object.h>
-#include <\Users\James\Dropbox\My Programs\C++\headers\button.h>
-#include <\Users\James\Dropbox\My Programs\C++\headers\text_button.h>
+#include "glutPrint.h"
+#include "clickable_object.h"
+#include "button.h"
+#include "text_button.h"
 
 //Button
 //By James Nakano
